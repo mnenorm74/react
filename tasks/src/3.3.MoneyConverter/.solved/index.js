@@ -37,7 +37,7 @@ class MoneyConverter extends React.Component {
     );
   }
 
-  handleChangeRubles = value => {
+  handleChangeRubles = value => { // eur => {this.setState({rubl;es: eur * CONST)
     this.setState({
       valueInRubles: value,
       valueInEuros: Math.round(100 * value / RUBLES_IN_ONE_EURO) / 100

@@ -19,9 +19,9 @@ class MoneyConverter extends React.Component {
           <h2>Конвертер валют</h2>
           <div>
             <span>&#8381;</span>
-            <Money />
+            <Money value={this.state.rub} onChange={}/>
             &mdash;
-            <Money />
+            <Money value={this.state.eur} onChange={}/>
             <span>&euro;</span>
           </div>
         </div>
@@ -34,7 +34,8 @@ class Money extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0
+      rub: 0,
+      eur: 0
     };
   }
 
