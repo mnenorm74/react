@@ -9,7 +9,7 @@ import Toggle from './Toggle';
     InputFormRow — штука классная, но поддерживает только обычные input.
     В новой форме понадобилось поддержать самописный Toggle — пришлось написать ToggleFormRow.
     Получилось много дублирующегося кода и это грустно :(
-    
+
     На помощь могут прийти Higher Order Components (HOC) — функции вида Component → Component.
     Используя HOC, можно создавать новые улучшенные компоненты из обычных:
         const EnhancedComponent = enhance(JustComponent); // enhance — это HOC
@@ -21,7 +21,7 @@ import Toggle from './Toggle';
           const InputFormRow = createFormRow(Input);
           const ToggleFormRow = createFormRow(Toggle);
        В качестве примера используй HOC из enhance.js.
-    
+
     2. Используй createFormRow, удалив старые реализации InputFormRow, ToggleFormRow.
 
     3. Открой React в Developer Tools в Chrome и убедись,
@@ -40,12 +40,37 @@ import Toggle from './Toggle';
        для всех возможных WrappedComponent, с которыми будет использоваться HOC.
  */
 
+function createFormRow(WrappedComponent) {
+  class FormRow extends React.Component {
+    constructor(props) {
+      super(props);
+    }
+    render() {
+      const { label, ...rest } = this.props;
+      return (
+          <div className="row">
+            <div className="label">{label}</div>
+            <WrappedComponent {...rest} />
+          </div>
+      );
+    }
+  }
+
+  FormRow.propTypes = {
+    label: PropTypes.string.isRequired
+  };
+
+  const wrappedName =
+      WrappedComponent.displayName || WrappedComponent.name || 'Component';
+  FormRow.displayName = `Enhanced(${wrappedName})`;
+  return FormRow;
+}
+const InputFormRow = createFormRow(Input);
+const ToggleFormRow = createFormRow(Toggle);
 class Form extends React.Component {
   constructor() {
     super();
-
     this.firstRowRef = React.createRef();
-
     this.state = {
       opened: false
     };
@@ -126,46 +151,6 @@ class Form extends React.Component {
 
 Form.propTypes = {
   user: PropTypes.object
-};
-
-class InputFormRow extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { label, ...rest } = this.props;
-    return (
-      <div className="row">
-        <div className="label">{label}</div>
-        <Input {...rest} />
-      </div>
-    );
-  }
-}
-
-InputFormRow.propTypes = {
-  label: PropTypes.string.isRequired
-};
-
-class ToggleFormRow extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    const { label, ...rest } = this.props;
-    return (
-      <div className="row">
-        <div className="label">{label}</div>
-        <Toggle {...rest} />
-      </div>
-    );
-  }
-}
-
-ToggleFormRow.propTypes = {
-  label: PropTypes.string.isRequired
 };
 
 ReactDom.render(<Form />, document.getElementById('app'));
